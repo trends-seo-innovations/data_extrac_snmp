@@ -1,0 +1,34 @@
+{
+    "description": "Returns device details",
+    "extractor_id": 3,
+    "id": 3,
+    "interval": 300,
+    "name": "Device Detail",
+    "source": "DNAC",
+    "table_name": "device_detail",
+    "extractor": [{
+        "columns": [{
+            "erf_id": 8,
+            "field_name": "communicationState",
+            "id": 8,
+            "status": "modify" | "drop" | "add"
+        }],
+        "parameter": [
+            {
+                "id": 1,
+                "key": "searchBy",
+                "value": null
+            },
+            {
+                "id": 2,
+                "key": "identifier",
+                "value": "uuid"
+            },
+            {
+                "id": 3,
+                "key": "timestamp",
+                "value": null
+            }
+        ]
+    }]
+}

@@ -1,0 +1,75 @@
+
+Extractor
+/extractor
+POST
+Request
+    {
+        "authentication_id": "2",
+        "name": "testname",
+        "type": "xxx",
+        "source": "xxx",
+        "method": "xxx",
+        "url": "xxx",
+        "target": "response",
+        "dependency_extractor": 1,
+        "target_response": [{
+            "response": [
+                {
+                    "type": "Cisco 3800I Unified Access Point",
+                    "family": "Unified AP",
+                    "errorCode": "null",
+                    "location": null,
+                    "role": "ACCESS",
+                    "lastUpdateTime": 1563931578663,
+                    "hostname": "AP6C8B.D329.1BB8",
+                    "macAddress": "dc:8c:37:a0:e7:a0",
+                    "softwareType": null,
+                    "softwareVersion": "8.5.131.0",
+                    "serialNumber": "FGL2316A073",
+                    "collectionInterval": "NA",
+                    "inventoryStatusDetail": "NA"
+                    
+                }
+            ]
+        }],
+        "parameter": [
+            {
+                "data": [
+                        
+                        {"key": "keyss", "value": "values"},
+                        {"key": "keyss1", "value": "values1"}
+                ]
+            }
+        
+        ]
+    }
+Response
+    Successfully added
+
+
+------------------------------------------------------------------------------------------------
+
+
+Worker
+/worker
+POST
+Request
+    {
+        "extractor_id": 1,
+        "name": "xxx",
+        "description":"xxx",
+        "source":"xxx",
+        "interval": 20,
+        "table_name": "seo_table",
+        "fields": [
+            {
+                "data": [
+                    {"id": 1, "fields": "reachabilityStatus"},
+                    {"id": 2, "fields": "upTime"},
+                    {"id": 3, "fields": "type"}
+                ]
+            }
+        ]
+    }
+Response
+    Successfully Added
