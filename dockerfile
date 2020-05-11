@@ -55,7 +55,7 @@ RUN pip install psutil==5.6.3
 RUN pip install jinjasql==0.1.7
 RUN pip install pymssql==2.1.4
  
-ENV DB_CONN 192.168.73.51
+ENV DB_CONN localhost
 ENV DB_PORT 1433
 ENV DB_PASSWORD p@ssw0rd
 ENV DB_NAME source_extractor_engine
