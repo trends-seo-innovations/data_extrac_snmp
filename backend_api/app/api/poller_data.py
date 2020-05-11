@@ -15,7 +15,7 @@ class PollerData(Resource):
     api_utils = ApiUtils()
     db_utils = DatabaseUtils()
     poller_schema = SnmpPollerSchema
-
+    @jwt_required
     def get(self, table_name=None):
         if table_name is None:
             return {'message': 'No table name', 'type': 'TableError'}, 422

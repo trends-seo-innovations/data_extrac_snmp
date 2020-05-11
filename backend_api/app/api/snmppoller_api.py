@@ -38,7 +38,7 @@ class SnmpPollerApi(Resource):
 
     module_name = 'SNMP Poller'
 
-
+    @jwt_required
     def get(self, id=None, show=None, status=None):
         args = self.api_utils.optional_parameters()
         try:
@@ -76,7 +76,7 @@ class SnmpPollerApi(Resource):
             db.session.close()
             db.engine.dispose()
             
-
+    @jwt_required
     def post(self):
         conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
         args = self.api_utils.parameters(self.main_model(), blacklist="append", selected_oid="append", ip_list="append")
@@ -142,7 +142,7 @@ class SnmpPollerApi(Resource):
 
 
     # edit
-
+    @jwt_required
     def put(self , id = None):
         args = self.api_utils.parameters(self.main_model(), blacklist="append", selected_oid="append", ip_list="append")
         poller_id = id
@@ -218,7 +218,7 @@ class SnmpPollerApi(Resource):
         else:
             return {'message': "Update unsuccessfull. Poller is running." } ,422
 
-
+    @jwt_required
     def delete(self, id=None):
         try:
 

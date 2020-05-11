@@ -1,0 +1,38 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: snmppoller
+spec:
+  selector:
+    app: usersapi
+  ports:
+    - protocol: "TCP"
+      # Port accessible inside cluster
+      port: 4044
+      # Port to forward to inside the pod
+      targetPort: 80
+      # Port accessible outside cluster
+      nodePort: 30002
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+secret :    dockersecrettwo
+metadata:
+  name: snmppollerdevelopment
+spec:
+  selector:
+    matchLabels:
+      app: usersapi
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: usersapi
+    spec:
+      containers:
+        - name: usersapi
+          image: jlalmenanza/snmp_poller_new
+          ports:
+            - containerPort: 80

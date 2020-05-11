@@ -7,7 +7,6 @@ class BlacklistApi(Resource):
 
     api_utils = ApiUtils()
     db_utils = DatabaseUtils()
-
     def post(self):
         args = self.api_utils.parameters_without_model(poller_config='append')
         

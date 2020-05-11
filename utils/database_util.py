@@ -45,9 +45,11 @@ class DatabaseUtil():
         no_except = True
         while no_except:
             try:
+    # SQLALCHEMY_DATABASE_URI = "mssql+pyodbc://sa:p@ssword@192.168.73.51:1433/source_extractor_engine?driver=FreeTDS&port=1433&odbc_options='TDS_Version=8.0'"
+
                 conn = pymssql.connect(
-                server=self.server, user=self.user,
-                password=self.password, database=self.database, login_timeout=30)  
+                server="192.168.73.51:1433", user="sa",
+                password="p@ssw0rd", database="source_extractor_engine", login_timeout=30)  
                 no_except = False
                 # self.db_logs("Connected to database")
                 # self.db_logs(no_except)

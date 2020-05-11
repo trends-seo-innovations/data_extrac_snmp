@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-user-deployment
+  namespace:  snmp-poller-name
+  labels:
+    app: api-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-user
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: disabled
+      labels:
+        app: api-user
+    spec:
+      containers:
+        - image: jlalmenanza/snmp_poller_new
+          imagePullPolicy: Always
+          name: api-snmp-poller
+          ports:
+            - containerPort: 4044
+          env:
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_PORT
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_USER
+            - name: DB_CONN
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: DB_CONN
+            - name: API_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: snmp-poller-config
+                  key: API_PORT
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi

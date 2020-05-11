@@ -16,7 +16,7 @@ class DataPollingApi(Resource):
 
     module_name = 'Polling Data Preview'
 
-
+    @jwt_required
     def post(self):
         args = self.api_utils.parameters_without_model(config='append')
 
