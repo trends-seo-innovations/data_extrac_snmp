@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-user-deployment
+  name: api-poller-deployment
   namespace:  snmp-poller-name
   labels:
-    app: api-user
+    app: api-poller
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: api-user
+      app: api-poller
   template:
     metadata:
       annotations:
         linkerd.io/inject: disabled
       labels:
-        app: api-user
+        app: api-poller
     spec:
       containers:
         - image: jlalmenanza/snmp_poller_new
           imagePullPolicy: Always
-          name: api-snmp-poller
+          name: api-poller-snmp
           ports:
             - containerPort: 4044
           env:
