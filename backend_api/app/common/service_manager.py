@@ -82,4 +82,13 @@ class ServiceManager():
                     logger.log("Restarting the service: %s" % (service['id']))
         except Exception as err:
             return err
-        
+    def stop_service(self, pid=None):
+        try:
+            process = subprocess.check_output(["kill", "-9" ,str(pid)])
+            return "SUCCESS: The process with PID %s has been terminated." % (str(pid))
+        except subprocess.CalledProcessError as called_error:
+            logger.log("Encountered error : %s" % (called_error.output), log_type='ERROR')
+            raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())
+        except Exception as err:
+            logger.log("Encountered error : %s" % (err), log_type='ERROR')
+            raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())

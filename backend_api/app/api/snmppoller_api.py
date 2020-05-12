@@ -38,7 +38,7 @@ class SnmpPollerApi(Resource):
 
     module_name = 'SNMP Poller'
 
-    @jwt_required
+    # @jwt_required
     def get(self, id=None, show=None, status=None):
         args = self.api_utils.optional_parameters()
         try:

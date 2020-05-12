@@ -24,18 +24,7 @@ RUN echo "[FreeTDS]\n\
  
 # install pyodbc (and, optionally, sqlalchemy)
 RUN pip install --trusted-host pypi.python.org pyodbc==4.0.26 sqlalchemy==1.3.5
- 
-# RUN wget https://gallery.technet.microsoft.com/ODBC-Driver-13-for-Ubuntu-b87369f0/file/154097/2/installodbc.sh
-# RUN apt-get update
-# RUN apt-get install -y tdsodbc unixodbc-dev
-# RUN apt install libssl1.0.0 libssl-dev
-# RUN apt install unixodbc-bin -y
-# RUN apt-get clean -y
- 
-# Add ./requirements.txt ./requirements.txt
- 
-# RUN python3 -m pip install -r requirements.txt
- 
+
 RUN pip install Flask==1.1.1
 RUN pip install Flask-Cors==3.0.8
 RUN pip install Flask-JWT==0.3.2
@@ -61,6 +50,9 @@ ENV DB_PASSWORD p@ssw0rd
 ENV DB_NAME source_extractor_engine
 ENV DB_USER sa
 ENV API_PORT 4044
+ENV USER_AUTH_address localhost
+ENV USER_AUTH_port 7000
+
  
 EXPOSE 4044 
 ADD . /srv
