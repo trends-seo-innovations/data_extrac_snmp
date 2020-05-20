@@ -13,10 +13,9 @@ class ServiceManager():
         try:
             # subprocess.Popen(["cd", "{0}/{1}".format(str(os.getcwd()), self.module_name), "&&", 
             #     str(file_name), str(id)], shell=True)
-            # subprocess.Popen(["cd", str(os.getcwd()), "&&", "python",
-            #     str(file_name), str(id)], shell=True)
             path = "%s/%s" % (str(os.getcwd()),str(file_name))
-            subprocess.Popen(["python", path, str(id)], shell=False)
+            subprocess.Popen(["python",
+                path, str(id)], shell=False)
             return True
         except Exception as err:
             logger.log("Encountered error : %s" % (err), log_type='ERROR')
@@ -24,10 +23,10 @@ class ServiceManager():
 
     def stop_service(self, pid=None):
         try:
-            process = subprocess.check_output(["taskkill", "/PID", str(pid) ,"/F"])
-            return process.decode('utf-8')
+            process = subprocess.check_output(["kill", "-9" ,str(pid)])
+            return "SUCCESS: The process with PID %s has been terminated." % (str(pid))
         except subprocess.CalledProcessError as called_error:
-            logger.log("Encountered error : %s" % (called_error), log_type='ERROR')
+            logger.log("Encountered error : %s" % (called_error.output), log_type='ERROR')
             raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())
         except Exception as err:
             logger.log("Encountered error : %s" % (err), log_type='ERROR')
@@ -41,30 +40,32 @@ class ServiceManager():
                 # tasklist = subprocess.check_output(['tasklist','/svc','/fi'
                 #     ,"ImageName eq {0}".format(file_name),'/fi',"pid eq %s" % pid])
                 #DEV
-                tasklist = subprocess.check_output(['tasklist','/svc','/fi'
-                    ,"ImageName eq python.exe",'/fi',"pid eq %s" % pid])
-                    
-                time.sleep(2)
 
-                return tasklist
+                # tasklist = subprocess.check_output(['tasklist','/svc','/fi'
+                #     ,"ImageName eq python.exe",'/fi',"pid eq %s" % pid])
+
+                status = self.is_pid_running(pid)
+                time.sleep(2)
+                return status
         except Exception as err:
             logger.log("Encountered error : %s" % (err), log_type='ERROR')
             raise ValueError(ErrorObject(type="ServiceError", message="Encountered error while checking the service").to_json())
 
-    def is_pid_running(self, id ,pid, services):
+    def is_pid_running(self, pid):
+        # services = ['worker.exe', 'aggregate.exe','visionapi.exe']
+        services = ['poller.py']
         # check if pid exists
         if psutil.pid_exists(pid):
             process = psutil.Process(pid)
-            if process:
-                if process.name() == 'worker.exe' and (process.cmdline()[1] and process.cmdline()[1] in services):
-                    return True
+            if process.name() == 'python.exe' and (process.cmdline()[1] and process.cmdline()[1] in services):
+                return True
+        
         # if pid does not exist, check if command exists
         for process in psutil.process_iter():
             try:
                 if len(process.cmdline()) == 3:
-                    if process.name() == 'worker.exe' and (process.cmdline()[1] and process.cmdline()[1] in services) and process.cmdline()[2] == id:
+                    if process.name() == 'python.exe' and (process.cmdline()[1] and process.cmdline()[1] in services) and process.cmdline()[2] == self.id:
                         if process.pid != os.getpid():
-                            self.save_pid(process.pid)
                             return True
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
@@ -82,13 +83,4 @@ class ServiceManager():
                     logger.log("Restarting the service: %s" % (service['id']))
         except Exception as err:
             return err
-    def stop_service(self, pid=None):
-        try:
-            process = subprocess.check_output(["kill", "-9" ,str(pid)])
-            return "SUCCESS: The process with PID %s has been terminated." % (str(pid))
-        except subprocess.CalledProcessError as called_error:
-            logger.log("Encountered error : %s" % (called_error.output), log_type='ERROR')
-            raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())
-        except Exception as err:
-            logger.log("Encountered error : %s" % (err), log_type='ERROR')
-            raise ValueError(ErrorObject(type="ServiceError", message="No tasks are running which match the specified criteria.").to_json())
+        
