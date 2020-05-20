@@ -24,7 +24,7 @@ class DevelopmentConfig(Config):
     SERVER_HOST = os.environ.get('API_HOST')
     DEBUG = True
     ENV = 'development'
-    # SQLALCHEMY_DATABASE_URI = "mssql+pyodbc://sa:p@ssw0rd@192.168.73.51:1433/source_extractor_engine?driver=FreeTDS&port=1433&odbc_options='TDS_Version=8.0'"
+    # SQLALCHEMY_DATABASE_URI = "mssql+pyodbc://sa:p@ssw0rd@192.168.73.51:1433/source_extractor_engine?driver=SQL+Server"
     SQLALCHEMY_DATABASE_URI = "mssql+pyodbc://{0}:{1}@{2}:{4}/{3}?driver=FreeTDS&port={4}&odbc_options='TDS_Version=8.0'".format(
             os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), 
             os.environ.get("DB_CONN"), os.environ.get("DB_NAME"), os.environ.get("DB_PORT"))

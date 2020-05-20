@@ -21,7 +21,7 @@ class NetworkDiscovery(Resource):
 
     module_name = 'Network Discovery'
 
-    @jwt_required
+    
     def post(self):
         args = self.api_utils.parameters_without_model(config='append')
         if args["config"]:

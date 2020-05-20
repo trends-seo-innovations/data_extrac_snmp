@@ -33,6 +33,6 @@ spec:
     spec:
       containers:
         - name: usersapi
-          image: jlalmenanza/snmp_poller_new
+          image: jlalmenanza/snmp_poller
           ports:
             - containerPort: 80

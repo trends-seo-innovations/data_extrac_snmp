@@ -10,7 +10,7 @@ class SchemaAPI(Resource):
     
     db_utils = DatabaseUtils()
 
-    @jwt_required
+    
     def get(self, table_name=None):
         if table_name is None:
             default = self.db_utils.get_all_model_name()

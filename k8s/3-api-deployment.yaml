@@ -2,10 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api-poller-deployment
-  namespace:  snmp-poller-name
+  namespace:  snmp-poller-namesace
   labels:
     app: api-poller
 spec:
+  volumes:
+  - name: docker-login
+    secret:
+      secretName: my-secret
   replicas: 1
   selector:
     matchLabels:
@@ -18,7 +22,7 @@ spec:
         app: api-poller
     spec:
       containers:
-        - image: jlalmenanza/snmp_poller_new
+        - image: jlalmenanza/snmp_poller
           imagePullPolicy: Always
           name: api-poller-snmp
           ports:

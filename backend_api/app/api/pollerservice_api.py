@@ -21,7 +21,7 @@ class PollerService(Resource):
 
     main_model = SnmpPoller
     main_schema = SnmpPollerSchema
-    @jwt_required
+    
     def get(self, id=None, log='logs', level=None):
         args = self.api_utils.optional_parameters()
         try:
@@ -48,7 +48,7 @@ class PollerService(Resource):
             db.session.close()
             db.engine.dispose()
     
-    @jwt_required    
+        
     def put(self, id=None):
         try:
             get_poller_service = self.db_utils.select_with_filter(self.main_model, self.main_schema, {'id': id})
@@ -74,7 +74,7 @@ class PollerService(Resource):
         except Exception as err:
             logger.log("Encountered error on poller service : %s" % (str(err)))
             return eval(str(err)), 422
-    @jwt_required
+    
     def delete(self, id=None):
         try:
             if id is None:

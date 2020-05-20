@@ -38,9 +38,8 @@ blacklist = set()
 @app.before_request
 def do_before_request():
     bearer_token = request.headers.get("Authorization").replace('Bearer ','')
-    auth_address = os.environ.get("USER_AUTH_address")
-    auth_port = os.environ.get("USER_AUTH_port")
-    auth_url = 'http://{0}:{1}/token/validate'.format(auth_address,auth_port)
+
+    auth_url = os.environ.get("VALIDATE_API_URL")
     head = {'Authorization': 'Bearer {}'.format(bearer_token)}
     response = requests.post(auth_url, headers=head)
     if (response.status_code == 200):

@@ -16,7 +16,7 @@ class CategoryApi(Resource):
     main_model = Categories
     main_schema = CategoriesSchema
 
-    @jwt_required
+    
     def get(self, id=None):
         category = db.session.query(self.main_model)
         if id is not None:

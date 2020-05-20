@@ -16,7 +16,7 @@ class OidApi(Resource):
     main_model = OidList
     main_schema = OidListSchema
 
-    @jwt_required
+    
 
     def get(self, id=None):
         oid_list = db.session.query(self.main_model.oid_key).distinct(self.main_model.oid_key)
