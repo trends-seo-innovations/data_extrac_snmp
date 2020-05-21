@@ -44,13 +44,7 @@ RUN pip install psutil==5.6.3
 RUN pip install jinjasql==0.1.7
 RUN pip install pymssql==2.1.4
  
-ENV DB_CONN 192.168.73.51
-ENV DB_PORT 1433
-ENV DB_PASSWORD p@ssw0rd
-ENV DB_NAME source_extractor_engine
-ENV DB_USER sa
-ENV API_PORT 4044
-ENV VALIDATE_API_URL http://172.17.0.2:7000/token/validate
+
 
  
 EXPOSE 4044 

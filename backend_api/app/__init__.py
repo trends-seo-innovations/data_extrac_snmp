@@ -25,7 +25,7 @@ logger.config_logging()
 
 app =  Flask(__name__)  
 
-CORS(app)
+CORS(app,resources={r"/*": {"origins": "*"}})
 app.config.from_object(config.app_config['development'])
 api = Api(app)
 db = SQLAlchemy(app)
@@ -35,18 +35,8 @@ jwt = JWTManager(app)
 
 blacklist = set()
 
-@app.before_request
-def do_before_request():
-    bearer_token = request.headers.get("Authorization").replace('Bearer ','')
 
-    auth_url = os.environ.get("VALIDATE_API_URL")
-    head = {'Authorization': 'Bearer {}'.format(bearer_token)}
-    response = requests.post(auth_url, headers=head)
-    if (response.status_code == 200):
-        pass
-    else:
-        return {"response": response.status_code, "message":"Unauthorized token"}
-   
+
 from backend_api.app.routes import urls
 from backend_api.app.config import default_handling
 from backend_api.app.config import restart_service
