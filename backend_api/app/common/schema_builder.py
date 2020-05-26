@@ -58,8 +58,8 @@ class SchemaBuilder(DatabaseUtils):
                         %s %s %s %s %s %s %s )
                 """ % (self.table,
                 str(self.table).lower(),
-                ''.join('[{}] VARCHAR(255),'.format(field) for field in self.fields),
-                ''.join('[{0}_{1}] VARCHAR(255),'.format(str(self.table).lower(),default) for default in self.default),
+                ''.join('[{}] VARCHAR(255) NULL,'.format(field) for field in self.fields),
+                ''.join('[{0}_{1}] VARCHAR(255) NULL,'.format(str(self.table).lower(),default) for default in self.default),
                  datetime,
                  fk,
                  status_field,
