@@ -58,11 +58,15 @@ class PollerService(Resource):
                 return {'message': "ID doesn't exist", "type": "ReferenceError"}, 422
 
             # check_service = self.service.check_service(pid=get_poller_service[0]['pid'], file_name='poller.exe')
-            check_service = self.service.check_service(pid=get_poller_service[0]['pid'], file_name='poller.py')
-            if 'image name' in str(check_service.decode("utf-8")).lower():
-                logger.log("Encountered error on poller service: \
-                     poller service is already running", log_type='ERROR')
-                return {'message': "poller service is already running", "type": "ServiceError"}, 422
+            aggre_tasklist = self.service.is_pid_running(get_poller_service[0]['pid'])
+            if aggre_tasklist:
+                logger.log("Encountered error on poller service: pPoller service is already running", log_type='ERROR')
+                return {'message': "Poller service is already running", "type": "ServiceError"}, 422
+            # check_service = self.service.check_service(pid=get_poller_service[0]['pid'], file_name='poller.py')
+            # if 'image name' in str(check_service.decode("utf-8")).lower():
+            #     logger.log("Encountered error on poller service: \
+            #          poller service is already running", log_type='ERROR')
+            #     return {'message': "poller service is already running", "type": "ServiceError"}, 422
                 
             else:
                 # self.service.start_service(id, 'poller.exe')
