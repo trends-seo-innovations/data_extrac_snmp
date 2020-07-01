@@ -16,3 +16,4 @@ if 'no_service' not in sys.argv:
     poller_service = db_utils.select_with_filter(SnmpPoller, SnmpPollerSchema, {'status': 1})
     # poll_service.restart_service(poller_service, 'poller.exe')
     poll_service.restart_service(poller_service, 'poller.py')
+    

@@ -104,6 +104,7 @@ class DatabaseUtils():
         db.session.close()
         db.engine.dispose()
         return _model_result
+    
 
     def select_query_with_filter(self, Model, filter):
         try:
@@ -230,7 +231,7 @@ class DatabaseUtils():
     def drop_table(self, *table_name):
         try:
             for table in reversed(table_name):
-                sql = "DROP TABLE [{0}]".format(table)
+                sql = "DROP TABLE {0}".format(table)
                 self.execute_raw_query(sql)
         except Exception as err:
             logger.log("Encountered error : %s" % (err), log_type='ERROR')
@@ -238,10 +239,10 @@ class DatabaseUtils():
 
     def drop_trigger(self, trigger_name, trigger_list=[]):
         for trigger in trigger_list:
-            sql = "DROP TRIGGER IF EXISTS [dbo].[trigger_%s]" % (trigger)
+            sql = "DROP TRIGGER IF EXISTS trigger_%s" % (trigger)
             self.execute_raw_query(sql)
         if trigger_name:
-            sql = "DROP TRIGGER IF EXISTS [dbo].[trigger_%s]" % (trigger_name)
+            sql = "DROP TRIGGER IF EXISTS trigger_%s" % (trigger_name)
             self.execute_raw_query(sql)
             
     def execute_raw_query(self, query):

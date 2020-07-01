@@ -27,12 +27,10 @@ app =  Flask(__name__)
 
 CORS(app,resources={r"/*": {"origins": "*"}})
 app.config.from_object(config.app_config['development'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 api = Api(app)
 db = SQLAlchemy(app)
-
-
 jwt = JWTManager(app)
-
 blacklist = set()
 
 

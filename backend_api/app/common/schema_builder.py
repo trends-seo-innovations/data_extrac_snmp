@@ -25,93 +25,107 @@ class SchemaBuilder(DatabaseUtils):
         source_fields = ""
         date_dim_field = ""
         fk = ""
-        if default_date:
-            datetime = '[datetime] datetime DEFAULT GETDATE(),'
-        else:
-            datetime = '[datetime] datetime,'
+        columns = []
+
+        if show_datetime:
+            if default_date:
+                datetime = 'datetime timestamp DEFAULT CURRENT_DATE,'
+                columns.append('datetime timestamp DEFAULT CURRENT_DATE')
+            else:
+                datetime = 'datetime timestamp,'
+                columns.append('datetime timestamp')
+            
 
         if status_id:
-            status_field = "[%s_status_id] VARCHAR(50) DEFAULT '0'," % (str(self.table).lower())
+            status_field = "%s_status_id VARCHAR(50) DEFAULT '0'," % (str(self.table).lower())
+            columns.append( "%s_status_id VARCHAR(50) DEFAULT '0'" % (str(self.table).lower()))
         
         if normalize_status_id:
-            normalize_status_field = "[%s_normalize_status_id] VARCHAR(50) DEFAULT '0'," % (str(self.table).lower())
+            normalize_status_field = "%s_normalize_status_id VARCHAR(50) DEFAULT '0'," % (str(self.table).lower())
+            columns.append("%s_normalize_status_id VARCHAR(50) DEFAULT '0'" % (str(self.table).lower()))
 
-        if show_datetime is False:
-            datetime = ""
+
 
         if agg_type is not None:
             if agg_type != 'current':
                 fk = '{0}_id INT FOREIGN KEY REFERENCES {0}_current({0}_current_id),'.format(self.orig_table_name)
+                columns.append('{0}_id INT FOREIGN KEY REFERENCES {0}_current({0}_current_id)'.format(self.orig_table_name))
+
 
         if source_ref:
-            source_fields = "[source_id] INT NULL, \
-                [source_table] varchar(255), \
-                [{0}] INT FOREIGN KEY REFERENCES date_dimension(date_id),".format(date_dim_name)
+            source_fields = "source_id INT NULL, \
+                source_table varchar(255), \
+                {0} INT FOREIGN KEY REFERENCES date_dimension(date_id),".format(date_dim_name)
+            columns.append( "source_id INT NULL, \
+                source_table varchar(255), \
+                {0} INT FOREIGN KEY REFERENCES date_dimension(date_id)".format(date_dim_name))
+            
                 
         if date_dim:
-            date_dim_field = "[{0}] INT FOREIGN KEY REFERENCES date_dimension(date_id),".format(date_dim_name)
+            date_dim_field = "{0} INT FOREIGN KEY REFERENCES date_dimension(date_id),".format(date_dim_name)
+            columns.append( "{0} INT FOREIGN KEY REFERENCES date_dimension(date_id)".format(date_dim_name))
+
 
         try:
             sql = """
-                CREATE TABLE [%s] 
-                    ( [%s_id] INT IDENTITY(1,1) PRIMARY KEY,
-                        %s %s %s %s %s %s %s )
+                CREATE TABLE %s 
+                    ( %s_id SERIAL PRIMARY KEY,
+                        %s %s %s )
                 """ % (self.table,
                 str(self.table).lower(),
-                ''.join('[{}] VARCHAR(255) NULL,'.format(field) for field in self.fields),
-                ''.join('[{0}_{1}] VARCHAR(255) NULL,'.format(str(self.table).lower(),default) for default in self.default),
-                 datetime,
-                 fk,
-                 status_field,
-                 source_fields,
-                 date_dim_field)
+                ''.join('{} VARCHAR(255) NULL,'.format(field) for field in self.fields),
+                ''.join('{0}_{1} VARCHAR(255) NULL,'.format(str(self.table).lower(),default) for default in self.default),
+                ','.join(columns))
             self.execute_raw_query(sql)
             return True
         except Exception as err:
             raise ValueError(ErrorObject(type="TableError", message="Encountered error while creating table.").to_json())
 
-    def create_trigger(self, data):
-        sql = """
-            CREATE TRIGGER [dbo].trigger_{0} ON  
-            [dbo].{1} AFTER INSERT AS BEGIN
-            INSERT INTO {2} ({3}, [{2}_source], [source_id], [source_table])
-            SELECT {4}, '{5}', [{1}_id], '{1}'
-            FROM dbo.{1} as t1 WITH (NOLOCK)
-            WHERE not exists (select * from {2} as t2 
-                where t1.{1}_id = t2.source_id and t2.source_table = '{1}')
-            WAITFOR DELAY '00:00:01'
-            UPDATE {2} SET [date_dimension_id] = (SELECT date_id FROM date_dimension 
-            WHERE [datetime] = cast({2}.datetime as date)) WHERE [date_dimension_id] IS NULL;
+    # def create_trigger(self, data):
+    #     sql = """
+    #         CREATE TRIGGER trigger_{0} ON  
+    #         {1} AFTER INSERT AS BEGIN
+    #         INSERT INTO {2} ({3}, {2}_source, source_id, source_table)
+    #         SELECT {4}, '{5}', {1}_id, '{1}'
+    #         FROM {1} as t1 WITH (NOLOCK)
+    #         WHERE not exists (select * from {2} as t2 
+    #             where t1.{1}_id = t2.source_id and t2.source_table = '{1}')
+    #         WAITFOR DELAY '00:00:01'
+    #         UPDATE {2} SET [date_dimension_id] = (SELECT date_id FROM date_dimension 
+    #         WHERE datetime = cast({2}.datetime as date)) WHERE date_dimension_id IS NULL;
 
-            WAITFOR DELAY '00:00:01'
-            END;
-        """.format(
-                data['trigger_name'],
-                data['table'],
-                data['destination_table'],
-                ','.join('[{}]'.format(dest) for dest in data['destination']),
-                ','.join('[{}]'.format(targ) for targ in data['target']),
-                data['source']
-            )
-        try:
-            self.execute_raw_query(sql)
-        except Exception as error:
-            logger.log(sql)
-            logger.log("Encountered error : %s" % (str(error)), log_type='ERROR')
-            self.drop_trigger(data['trigger_name'])
-            raise ValueError(ErrorObject(type="StoredProcedureError", message="Please check the target tables and fields").to_json())
+    #         WAITFOR DELAY '00:00:01'
+    #         END;
+    #     """.format(
+    #             data['trigger_name'],
+    #             data['table'],
+    #             data['destination_table'],
+    #             ','.join('{}'.format(dest) for dest in data['destination']),
+    #             ','.join('{}'.format(targ) for targ in data['target']),
+    #             data['source']
+    #         )
+    #     try:
+    #         self.execute_raw_query(sql)
+    #     except Exception as error:
+    #         logger.log(sql)
+    #         logger.log("Encountered error : %s" % (str(error)), log_type='ERROR')
+    #         self.drop_trigger(data['trigger_name'])
+    #         raise ValueError(ErrorObject(type="StoredProcedureError", message="Please check the target tables and fields").to_json())
 
     
     def create_data_retention(self, table_name, retention=30):
 
-        sql = """
-            CREATE TRIGGER [dbo].trigger_{0} ON  
-            [dbo].{0} AFTER INSERT AS BEGIN 
-            DELETE FROM dbo.{0} WHERE {0}_id in (SELECT {0}_id
-            FROM dbo.{0} 
-            where cast([datetime] as date) < CAST(DATEADD(DAY,-{1},GETDATE()) AS date))
-            END
-        """.format(table_name, retention)
+
+        sql = """CREATE FUNCTION delete_old_{0}() RETURNS trigger
+                LANGUAGE plpgsql
+                AS $$
+                BEGIN
+                DELETE FROM {0} WHERE datetime < NOW() - INTERVAL '{1} days'; RETURN NULL; END; $$;
+
+                CREATE TRIGGER trigger_delete_{0}
+                    AFTER INSERT ON {0}
+                    EXECUTE PROCEDURE delete_old_{0}(); """.format(table_name, retention)
+
         try:
             self.execute_raw_query(sql)
         except Exception as error:

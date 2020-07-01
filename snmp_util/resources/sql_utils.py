@@ -8,9 +8,9 @@ class sql_templates(Enum):
             left join oid_list ooid on soid.oid_key = ooid.oid_key
             where snmp_poller_id = '{{poll_id | sqlsafe}}' and ooid.brand_name = '{{brand | sqlsafe}}'"""
 
-    poll_update_up ="""UPDATE {0} SET {1},datetime = GETDATE(),status = '1' where ip_address = '{2}' """
+    poll_update_up ="""UPDATE {0} SET {1},datetime = CURRENT_DATE,status = '1' where ip_address = '{2}' """
 
-    poll_update_down ="""UPDATE {0} SET datetime = GETDATE(),status = '0' where ip_address = '{1}' """
+    poll_update_down ="""UPDATE {0} SET datetime = CURRENT_DATE,status = '0' where ip_address = '{1}' """
 
     poll_insert = """Insert Into {0} ({1}) Values ({2})"""
 

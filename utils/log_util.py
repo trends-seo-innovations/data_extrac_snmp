@@ -59,7 +59,7 @@ class Logger():
         log = log.replace('\'', '\"')
 
         if self.use_db:
-            query_string = 'INSERT INTO {0} values ({1}, \'{2}\', \'{3}\', DEFAULT)'.format(self.table_name, self.module_id, log_type, log)
+            query_string = 'INSERT INTO {0}  values (default , \'{1}\', \'{2}\', \'{3}\' ,default)'.format(self.table_name,  str(self.module_id), log_type, log)
             try:
                 self.conn.insert_query(query_string)
             except Exception as err:

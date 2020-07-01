@@ -72,7 +72,7 @@ class PollerService(Resource):
                 # self.service.start_service(id, 'poller.exe')
                 self.service.start_service(id, 'poller.py')
 
-            logger.log("Starting the Service : (%s) Successfully running the service" % (id))
+            logger.log("Starting the Service : ({0}) Service is running".format(id))
             return {'message': 'Successfully running the service'}, 200
             
         except Exception as err:

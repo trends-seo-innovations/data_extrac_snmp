@@ -33,7 +33,6 @@ class SnmpPollerApi(Resource):
 
     main_model = SnmpPoller
     main_schema = SnmpPollerSchema
-
     service = ServiceManager(module_name='poller')
 
     module_name = 'SNMP Poller'

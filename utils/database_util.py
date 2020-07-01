@@ -3,6 +3,10 @@ import os
 import sys
 from jinjasql import JinjaSql
 import time
+import psycopg2
+import utils.conn_data as creds
+import json
+import psycopg2.extras
 class DatabaseUtil():
     def __init__(self, server=None, user=None, password=None, database=None, logger=None):
         self.server = server
@@ -18,10 +22,6 @@ class DatabaseUtil():
             return True
         else:
             return False
-        # is_deadlock =  all(elem in error_string for elem in ['deadlocked','deadlock','(1205'])
-        # if is_deadlock:
-        #     print("Deadlock Encountered. Retrying")
-        # return is_deadlock
 
     def db_logs(self, message="", status='INFO'):
         if self.logger is None:
@@ -32,22 +32,13 @@ class DatabaseUtil():
 
 
     def get_connection(self, api=None ,interval  = 2):
-        # try:
-        #     conn = pymssql.connect(
-        #         server=self.server, user=self.user,
-        #         password=self.password, database=self.database, login_timeout=30)
-        # except pymssql.DatabaseError as err:
-        #     raise pymssql.DatabaseError("Cannot connect to database: %s" % (err))
-        # except Exception as err:
-        #     raise ValueError("Error in connecting to database: %s" % (err))
-        # return conn
-        
+  
         no_except = True
         while no_except:
             try:
-                conn = pymssql.connect(
-                server=self.server, user=self.user,
-                password=self.password, database=self.database, login_timeout=30)  
+                conn_string = "host="+ creds.PGHOST +" port="+ "5432" +" dbname="+ creds.PGDATABASE +" user=" + creds.PGUSER \
+                +" password="+ creds.PGPASSWORD
+                conn=psycopg2.connect(conn_string)   
                 no_except = False
                 # self.db_logs("Connected to database")
                 # self.db_logs(no_except)
@@ -70,13 +61,15 @@ class DatabaseUtil():
         while no_except:
             try:
                 db_conn = self.get_connection()
-                cursor = db_conn.cursor(as_dict=True)
+                cursor = db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
                 cursor.execute(query_string)
-                resultset = cursor.fetchall()
-                no_except = False
+                resultset = json.dumps(cursor.fetchall(),indent=2) 
                 cursor.close()
+                db_conn.close()
+                no_except = False
 
-                return resultset
+                return json.loads(resultset)
+
             except Exception as err:
                 db_conn.rollback()
                 if self.deadlock_validator(err):
@@ -198,13 +191,17 @@ class DatabaseUtil():
         no_except = True
         while no_except:
             try:
+
                 db_conn = self.get_connection()
-                cursor = db_conn.cursor(as_dict=True)
+                cursor = db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
                 cursor.execute(query,dict(bind_params))
-                resultset = cursor.fetchall()
-                no_except = False
+                resultset = json.dumps(cursor.fetchall(),indent=2) 
                 cursor.close()
-                return resultset
+                db_conn.close()
+                no_except = False
+
+                return json.loads(resultset)
+
             except Exception as err:
                 db_conn.rollback()
                 if self.deadlock_validator(err):
