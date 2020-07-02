@@ -38,11 +38,11 @@ spec:
                 configMapKeyRef:
                   name: snmp-poller-config
                   key: DB_PASSWORD
-            - name: DB_NAME
+            - name: SNMPDB
               valueFrom:
                 configMapKeyRef:
                   name: snmp-poller-config
-                  key: DB_NAME
+                  key: SNMPDB
             - name: DB_USER
               valueFrom:
                 configMapKeyRef:

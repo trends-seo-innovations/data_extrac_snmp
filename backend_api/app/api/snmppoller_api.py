@@ -61,7 +61,7 @@ class SnmpPollerApi(Resource):
                     poller_element['selected_oid'] = selected_oid
                     
                 if 'selected_ips' in args['include']:
-                    conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
+                    conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"))
                     query_string = "Select {0}_id,ip_address,system_description,system_name,brand from {0}".format(poller_element["table_name"])     
                     result = conn.select_query(query_string)
                     poller_element['selected_ip'] = result
@@ -76,7 +76,7 @@ class SnmpPollerApi(Resource):
             
     
     def post(self):
-        conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
+        conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"))
         args = self.api_utils.parameters(self.main_model(), blacklist="append", selected_oid="append", ip_list="append")
         list_of_ids = {}
         try:
@@ -119,7 +119,7 @@ class SnmpPollerApi(Resource):
                 SchemaBuilder(args['table_name'], fields=oid_main).create_table(default_date=True)
                 SchemaBuilder().create_data_retention(args['table_name'])
 
-                conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
+                conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"))
                 query_string = 'INSERT INTO {0} (ip_address,system_description,brand,system_name) values ({1})' .format(args['table_name'], '%(ip_address)s,%(system_description)s,%(brand)s ,%(system_name)s')   
                 conn.insert_many_query(query_string, ip_list)
 
@@ -144,7 +144,7 @@ class SnmpPollerApi(Resource):
     def put(self , id = None):
         args = self.api_utils.parameters(self.main_model(), blacklist="append", selected_oid="append", ip_list="append")
         poller_id = id
-        conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
+        conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"))
         poll_data = conn.select_query('Select status from snmp_poller where id = {0}'.format(poller_id))
         if not poll_data:
             return {'message': "ID doesn't exist", "type": "ReferenceError"}, 422

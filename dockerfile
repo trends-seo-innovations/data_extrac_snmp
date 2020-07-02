@@ -3,6 +3,13 @@ FROM python:3.7
 WORKDIR /srv
 ADD . .
 #for pymssql
+ENV DB_CONN=10.0.0.4
+ENV SNMP_DB_PORT=30008
+ENV DB_PASSWORD=postgres
+ENV SNMPDB=dxsnmp
+ENV DB_USER=postgres
+ENV API_PORT=80
+ENV VALIDATE_API_URL=http://172.17.28.122:30000/token/validate
 RUN pip install --upgrade pip
  
 # RUN sh installodbc.sh
@@ -43,11 +50,13 @@ RUN pip install datetime==4.3
 RUN pip install psutil==5.6.3
 RUN pip install jinjasql==0.1.7
 RUN pip install pymssql==2.1.4
+RUN pip install  psycopg2
+
  
 
 
  
-EXPOSE 4044 
+EXPOSE 80 
 ADD . /srv
  
 ENTRYPOINT [ "python" ] 

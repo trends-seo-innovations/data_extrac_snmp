@@ -10,7 +10,7 @@ class BlacklistApi(Resource):
     db_utils = DatabaseUtils()
     main_model = SnmpPoller
     def post(self):
-        conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
+        conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"))
         args = self.api_utils.parameters(self.main_model(), blacklist="append", selected_oid="append", ip_list="append")
        
         # args = self.api_utils.parameters_without_model(poller_config='append')

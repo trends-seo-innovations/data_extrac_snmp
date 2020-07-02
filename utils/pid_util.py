@@ -10,7 +10,7 @@ class ProcessIdUtil():
         self.module_name = module_name.replace(' ', '_').lower()
         self.table_name = table_name
         self.logger = logger
-        self.conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"), self.logger)
+        self.conn = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"), self.logger)
 
     def create_directory(self):
         if not os.path.exists(os.path.join(os.getcwd(), self.pid_directory)):

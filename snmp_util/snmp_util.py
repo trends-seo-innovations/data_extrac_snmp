@@ -15,7 +15,7 @@ class Pollerutil():
         try:
            self.conn = pymssql.connect(
                 server=os.environ.get("DB_CONN"), user=os.environ.get("DB_USER"),
-                password=os.environ.get("DB_PASSWORD"), database=os.environ.get("DB_NAME"), login_timeout=30)
+                password=os.environ.get("DB_PASSWORD"), database=os.environ.get("SNMPDB"), login_timeout=30)
         except Exception as err:
             sys.exit()
 

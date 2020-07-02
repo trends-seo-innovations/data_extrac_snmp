@@ -15,7 +15,7 @@ class SchemaBuilder(DatabaseUtils):
         self.fields = fields
         self.default = default
         self.db_util = DatabaseUtil(os.environ.get("DB_CONN"), os.environ.get("DB_USER"), 
-            os.environ.get("DB_PASSWORD"), os.environ.get("DB_NAME"))
+            os.environ.get("DB_PASSWORD"), os.environ.get("SNMPDB"))
 
 
     def create_table(self,default_date=False,show_datetime=True, agg_type=None, status_id=False, normalize_status_id=False, source_ref=False, date_dim=False, date_dim_name='date_dimension_id'):
